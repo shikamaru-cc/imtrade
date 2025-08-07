@@ -14,25 +14,9 @@
 #CXX = g++
 #CXX = clang++
 
-EXE = imtrade
-IMGUI_DIR = imgui
-IMPLOT_DIR = implot
-OBJ_DIR = build
-SOURCES = main.cpp
-SOURCES += $(IMPLOT_DIR)/implot.cpp $(IMPLOT_DIR)/implot_items.cpp
-SOURCES += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/backends/imgui_impl_sdl2.cpp $(IMGUI_DIR)/backends/imgui_impl_sdlrenderer2.cpp
-OBJS_NAME = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
-OBJS = $(addprefix $(OBJ_DIR)/, $(OBJS_NAME))
-UNAME_S := $(shell uname -s)
-
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/backends -I$(IMPLOT_DIR)
-CXXFLAGS += -g -Wall -Wformat
+CXXFLAGS = -std=c++11 -g -Wall -Wformat
 LIBS =
-
-##---------------------------------------------------------------------
-## BUILD FLAGS PER PLATFORM
-##---------------------------------------------------------------------
+UNAME_S = $(shell uname -s)
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
@@ -60,30 +44,39 @@ ifeq ($(OS), Windows_NT)
 	CFLAGS = $(CXXFLAGS)
 endif
 
-##---------------------------------------------------------------------
-## BUILD RULES
-##---------------------------------------------------------------------
+OBJ = imtrade.o \
+	imgui.o \
+	imgui_demo.o \
+	imgui_draw.o \
+	imgui_tables.o \
+	imgui_widgets.o \
+	imgui_impl_sdl2.o \
+	imgui_impl_sdlrenderer2.o \
+	implot.o \
+	implot_items.o
 
-all: $(OBJ_DIR) $(EXE)
-	@echo Build complete for $(ECHO_MESSAGE)
+all: imtrade
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+imgui.o: imgui.cpp imgui.h imconfig.h imgui_internal.h
+imgui_demo.o: imgui_demo.cpp imgui.h imconfig.h
+imgui_draw.o: imgui_draw.cpp imgui.h imconfig.h imgui_internal.h imstb_rectpack.h imstb_truetype.h
+imgui_impl_sdl2.o: imgui_impl_sdl2.cpp imgui.h imconfig.h imgui_impl_sdl2.h
+imgui_impl_sdlrenderer2.o: imgui_impl_sdlrenderer2.cpp imgui.h imconfig.h imgui_impl_sdlrenderer2.h
+imgui_tables.o: imgui_tables.cpp imgui.h imconfig.h imgui_internal.h
+imgui_widgets.o: imgui_widgets.cpp imgui.h imconfig.h imgui_internal.h imstb_textedit.h
+implot.o: implot.cpp implot.h imgui.h imconfig.h implot_internal.h imgui_internal.h
+implot_items.o: implot_items.cpp implot.h imgui.h imconfig.h implot_internal.h imgui_internal.h
+imtrade.o: imtrade.cpp imgui.h imconfig.h imgui_impl_sdl2.h imgui_impl_sdlrenderer2.h implot.h implot_internal.h imgui_internal.h
 
-$(OBJ_DIR)/%.o:%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+imtrade: $(OBJ)
+	$(CXX) -o imtrade $(OBJ) $(CXXFLAGS) $(LIBS)
 
-$(OBJ_DIR)/%.o:$(IMGUI_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(IMGUI_DIR)/backends/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ_DIR)/%.o:$(IMPLOT_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(EXE): $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $<
 
 clean:
-	rm -rf $(EXE) $(OBJ_DIR)
+	rm -rf imtrade *.o
+
+dep:
+	$(CC) -MM *.cpp
+

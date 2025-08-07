@@ -18,7 +18,7 @@
 #include "implot_internal.h"
 
 #include <stdio.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #ifdef _WIN32
 #include <windows.h>        // SetProcessDPIAware()
 #endif
