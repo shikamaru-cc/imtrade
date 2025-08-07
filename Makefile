@@ -78,5 +78,5 @@ clean:
 	rm -rf imtrade *.o
 
 dep:
-	$(CC) -MM *.cpp
+	$(CXX) -MM *.cpp
 
