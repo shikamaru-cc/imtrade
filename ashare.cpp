@@ -94,21 +94,18 @@ void duckdb_write_candles(Connection& conn, const std::string & symbol, const st
 
 #if 1
 #include "cJSON.c"
-int main() {
-    // 初始化DuckDB（内存数据库）
+int main()
+{
     DuckDB db(nullptr);
     Connection conn(db);
 
-    // 初始化libcurl
     curl_global_init(CURL_GLOBAL_DEFAULT);
 
-    // 获取并写入数据
-    curl_response res = sina_get_price("sh000001", "60m", 10);
+    curl_response res = sina_get_price("sh000001", "30m", 10);
     if (!res.errmsg.empty()) std::cerr << res.errmsg;
     const auto candles = sina_parse_price(res.data);
     duckdb_write_candles(conn, "sh000001", candles);
 
-    // 查询验证
     auto result = conn.Query("SELECT * FROM stocks;");
     if (!result->HasError()) {
         result->Print();
