@@ -1,4 +1,6 @@
 *.o
 .idea/
 imtrade
+imtrade.db
+imtrade.db.wal
 imgui.ini
