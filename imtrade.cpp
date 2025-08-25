@@ -232,7 +232,7 @@ int main(int, char**) {
 
     static lv_candles candles;
     lv_candles_init(&candles, 100);
-    lv_candles_fetch(&candles, "", "sh000001", "60");
+    lv_candles_fetch(&candles, "sina", "sh000001", "1d");
 
     // Main loop
     bool done = false;

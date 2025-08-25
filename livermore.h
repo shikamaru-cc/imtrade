@@ -12,6 +12,7 @@ typedef struct lv_candles {
     double *close;
     uint64_t *volume;
     size_t size;
+    size_t cap;
 } lv_candles;
 
 extern void lv_candles_init (lv_candles *candles, size_t sz);
