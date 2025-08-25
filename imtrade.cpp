@@ -94,7 +94,7 @@ static void plot_candles(const char* label_id, const lv_candles* candles) {
             struct tm* tm_info = localtime(&candles->timestamp[i]);
             if (i == 0 || tm_info->tm_mon != prev_month) {
                 tick_positions.push_back((double)i);
-                strftime(date_buf, sizeof(date_buf), "%Y-%m", tm_info);
+                strftime(date_buf, sizeof(date_buf), "%Y/%m", tm_info);
                 date_strings.emplace_back(date_buf);
                 tick_labels.push_back(date_strings.back().c_str());
                 prev_month = tm_info->tm_mon;
@@ -107,7 +107,7 @@ static void plot_candles(const char* label_id, const lv_candles* candles) {
             struct tm* tm_info = localtime(&candles->timestamp[i]);
             if (i == 0 || tm_info->tm_mday != prev_day) {
                 tick_positions.push_back((double)i);
-                strftime(date_buf, sizeof(date_buf), "%m-%d", tm_info);
+                strftime(date_buf, sizeof(date_buf), "%m/%d", tm_info);
                 date_strings.emplace_back(date_buf);
                 tick_labels.push_back(date_strings.back().c_str());
                 prev_day = tm_info->tm_mday;
@@ -255,7 +255,7 @@ int main(int, char**) {
 
     static lv_candles candles;
     lv_candles_init(&candles, 100);
-    lv_candles_fetch(&candles, "sina", "sh000001", "1d");
+    lv_candles_fetch(&candles, "sina", "sh000001", "1h");
 
     // Main loop
     bool done = false;
