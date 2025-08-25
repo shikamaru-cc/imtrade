@@ -79,16 +79,39 @@ static void plot_candles(const char* label_id, const lv_candles* candles) {
     tick_positions.clear();
     tick_labels.clear();
     date_strings.clear();
-    int prev_day;
+    // Detect if this is daily data by checking time interval
+    bool is_daily = false;
+    if (candles->size > 1) {
+        time_t interval = candles->timestamp[1] - candles->timestamp[0];
+        is_daily = (interval >= 86400); // 24 hours or more
+    }
+
     char date_buf[16];
-    for (size_t i = 0; i < candles->size; i++) {
-        struct tm* tm_info = localtime(&candles->timestamp[i]);
-        if (i == 0 || tm_info->tm_mday != prev_day) {
-            tick_positions.push_back((double)i);
-            strftime(date_buf, sizeof(date_buf), "%m-%d", tm_info);
-            date_strings.emplace_back(date_buf);
-            tick_labels.push_back(date_strings.back().c_str());
-            prev_day = tm_info->tm_mday;
+    if (is_daily) {
+        // For daily data, show month changes
+        int prev_month = -1;
+        for (size_t i = 0; i < candles->size; i++) {
+            struct tm* tm_info = localtime(&candles->timestamp[i]);
+            if (i == 0 || tm_info->tm_mon != prev_month) {
+                tick_positions.push_back((double)i);
+                strftime(date_buf, sizeof(date_buf), "%Y-%m", tm_info);
+                date_strings.emplace_back(date_buf);
+                tick_labels.push_back(date_strings.back().c_str());
+                prev_month = tm_info->tm_mon;
+            }
+        }
+    } else {
+        // For intraday data, show day changes
+        int prev_day = -1;
+        for (size_t i = 0; i < candles->size; i++) {
+            struct tm* tm_info = localtime(&candles->timestamp[i]);
+            if (i == 0 || tm_info->tm_mday != prev_day) {
+                tick_positions.push_back((double)i);
+                strftime(date_buf, sizeof(date_buf), "%m-%d", tm_info);
+                date_strings.emplace_back(date_buf);
+                tick_labels.push_back(date_strings.back().c_str());
+                prev_day = tm_info->tm_mday;
+            }
         }
     }
     ImPlot::SetupAxisTicks(
