@@ -1,6 +1,9 @@
 *.o
 .idea/
+.cache/
+.claude/
 imtrade
 imtrade.db
 imtrade.db.wal
 imgui.ini
+compile_commands.json

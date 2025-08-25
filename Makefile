@@ -20,7 +20,7 @@ UNAME_S = $(shell uname -s)
 
 ifeq ($(UNAME_S), Linux) #LINUX
 	ECHO_MESSAGE = "Linux"
-	LIBS += -lGL -ldl `sdl2-config --libs`
+	LIBS += -lGL -ldl -lcurl `sdl2-config --libs`
 
 	CXXFLAGS += `sdl2-config --cflags`
 	CFLAGS = $(CXXFLAGS)
@@ -53,20 +53,32 @@ OBJ = imtrade.o \
 	imgui_impl_sdl2.o \
 	imgui_impl_sdlrenderer2.o \
 	implot.o \
-	implot_items.o
+	implot_items.o \
+	livermore.o \
+	cJSON.o
 
 all: imtrade
 
+cJSON.o: cJSON.cpp cJSON.h
 imgui.o: imgui.cpp imgui.h imconfig.h imgui_internal.h
 imgui_demo.o: imgui_demo.cpp imgui.h imconfig.h
-imgui_draw.o: imgui_draw.cpp imgui.h imconfig.h imgui_internal.h imstb_rectpack.h imstb_truetype.h
-imgui_impl_sdl2.o: imgui_impl_sdl2.cpp imgui.h imconfig.h imgui_impl_sdl2.h
-imgui_impl_sdlrenderer2.o: imgui_impl_sdlrenderer2.cpp imgui.h imconfig.h imgui_impl_sdlrenderer2.h
+imgui_draw.o: imgui_draw.cpp imgui.h imconfig.h imgui_internal.h \
+ imstb_rectpack.h imstb_truetype.h
+imgui_impl_sdl2.o: imgui_impl_sdl2.cpp imgui.h imconfig.h \
+ imgui_impl_sdl2.h
+imgui_impl_sdlrenderer2.o: imgui_impl_sdlrenderer2.cpp imgui.h imconfig.h \
+ imgui_impl_sdlrenderer2.h
 imgui_tables.o: imgui_tables.cpp imgui.h imconfig.h imgui_internal.h
-imgui_widgets.o: imgui_widgets.cpp imgui.h imconfig.h imgui_internal.h imstb_textedit.h
-implot.o: implot.cpp implot.h imgui.h imconfig.h implot_internal.h imgui_internal.h
-implot_items.o: implot_items.cpp implot.h imgui.h imconfig.h implot_internal.h imgui_internal.h
-imtrade.o: imtrade.cpp imgui.h imconfig.h imgui_impl_sdl2.h imgui_impl_sdlrenderer2.h implot.h implot_internal.h imgui_internal.h
+imgui_widgets.o: imgui_widgets.cpp imgui.h imconfig.h imgui_internal.h \
+ imstb_textedit.h
+implot.o: implot.cpp implot.h imgui.h imconfig.h implot_internal.h \
+ imgui_internal.h
+implot_items.o: implot_items.cpp implot.h imgui.h imconfig.h \
+ implot_internal.h imgui_internal.h
+imtrade.o: imtrade.cpp imgui.h imconfig.h imgui_impl_sdl2.h \
+ imgui_impl_sdlrenderer2.h implot.h implot_internal.h imgui_internal.h \
+ livermore.h
+livermore.o: livermore.cpp livermore.h cJSON.h
 
 imtrade: $(OBJ)
 	$(CXX) -o imtrade $(OBJ) $(CXXFLAGS) $(LIBS)

@@ -21,9 +21,7 @@ static cJSON * curl_json(CURL *curl, const char *url)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, fs);
     CURLcode res = curl_easy_perform(curl);
     fclose(fs);
-    if (res == CURLE_OK) {
-        json = cJSON_ParseWithLength(buf, bufsz);
-    }
+    if (res == CURLE_OK) json = cJSON_ParseWithLength(buf, bufsz);
     free(buf);
     return json;
 }
@@ -99,8 +97,8 @@ void lv_indicator_ma(size_t winsz, size_t sz, const double *in, double *ou)
     }
 }
 
-#if 1
-#include "cJSON.c"
+#if 0
+#include "cJSON.cpp"
 int main(int argc, const char *argv[])
 {
     curl_global_init(CURL_GLOBAL_DEFAULT);
